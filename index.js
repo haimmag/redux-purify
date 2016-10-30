@@ -1,9 +1,9 @@
 
 
-const actionReducerPair = (actionType, input) => {
+const actionReducerPair = (actionType, input, namespace) => {
   const base = {
     actionCreator: (...args) => ({
-      type: actionType,
+      type: namespace + actionType,
       __args: args,
     })
   };
@@ -29,7 +29,7 @@ const actionReducerPair = (actionType, input) => {
 
 
 
-export default (pairs, initialState) => {
+export default (pairs, initialState, namespace = '') => {
 
   if (typeof pairs !== 'object') {
     throw new Error('redux-purify only accepts objects as argument');
@@ -37,24 +37,24 @@ export default (pairs, initialState) => {
 
   const { actions, reducers, constants } = Object.keys(pairs).reduce((acc, actionType) => {
     const input = pairs[actionType];
-    const item = actionReducerPair(actionType, input);
+    const item = actionReducerPair(actionType, input, namespace);
 
     const actions = {
       ...acc.actions,
       [actionType]: (...args) => ({
-        type: actionType,
+        type: namespace + actionType,
         ...item.actionCreator(...args),
       }),
     };
 
     const reducers = {
       ...acc.reducers,
-      [actionType]: item.reducer,
+      [namespace + actionType]: item.reducer,
     };
 
     const constants = {
       ...acc.constants,
-      [actionType]: actionType,
+      [actionType]: namespace + actionType,
     };
 
     return {
