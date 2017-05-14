@@ -4,6 +4,7 @@ const actionReducerPair = (actionType, input, namespace) => {
   const base = {
     actionCreator: (...args) => ({
       type: namespace + actionType,
+      payload: args.length > 1 ? args : args[0],
       __args: args,
     })
   };
