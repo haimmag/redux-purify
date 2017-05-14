@@ -38,24 +38,25 @@ export default (pairs, initialState, namespace = '') => {
 
   const { actions, reducers, constants } = Object.keys(pairs).reduce((acc, actionType) => {
     const input = pairs[actionType];
+    const actionName = actionType.replace(/([A-Z])/g, '_$1').toUpperCase();
     const item = actionReducerPair(actionType, input, namespace);
 
     const actions = {
       ...acc.actions,
       [actionType]: (...args) => ({
-        type: namespace + actionType,
+        type: namespace + actionName,
         ...item.actionCreator(...args),
       }),
     };
 
     const reducers = {
       ...acc.reducers,
-      [namespace + actionType]: item.reducer,
+      [namespace + actionName]: item.reducer,
     };
 
     const constants = {
       ...acc.constants,
-      [actionType]: namespace + actionType,
+      [actionType]: namespace + actionName,
     };
 
     return {
